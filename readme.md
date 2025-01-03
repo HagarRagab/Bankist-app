@@ -3,7 +3,7 @@
 ![alt text](./design/bankist-home.jpg)
 ![alt text](./design/account-management.jpg)
 
-**Live demo** [click here](https://bankist-web-application.netlify.app/)
+**Live demo** [click here](https://bankist-banking-management.netlify.app/)
 
 > ### **Description:**
 
