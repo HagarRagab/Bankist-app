@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////
 
 const account1 = {
-  owner: 'Jonas Schmedtmann',
+  owner: 'Hagar Ragab',
   interestRate: 1.2, // %
   pin: 1111,
 
@@ -44,8 +44,8 @@ const account1 = {
     },
   ],
 
-  currency: 'EUR',
-  locale: 'pt-PT', // de-DE
+  currency: 'EGP',
+  locale: 'en-EG',
 
   getMovsAmounts() {
     return this.movemetnsInfo.map(mov => mov.amount);
@@ -53,7 +53,7 @@ const account1 = {
 };
 
 const account2 = {
-  owner: 'Hagar Ragab',
+  owner: 'Emma Noah',
   interestRate: 1.5,
   pin: 2222,
 
@@ -92,8 +92,8 @@ const account2 = {
     },
   ],
 
-  currency: 'EGP',
-  locale: 'en-EG',
+  currency: 'EUR',
+  locale: 'pt-PT', // de-DE
 };
 
 const account3 = {
@@ -172,7 +172,7 @@ const account4 = {
   locale: 'en-UK',
 };
 
-const accounts = [account1, account2, account3, account4];
+let accounts = [account1, account2, account3, account4];
 const movsAmountsArr = account1.getMovsAmounts;
 
 /////////////////////////////////////////////////
@@ -214,7 +214,7 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-let currentAccount, timer;
+let currentAccount, timer, clock;
 
 /////////////////////////////////////////////////
 // DATE AND TIME
@@ -244,6 +244,8 @@ const handleMovsDates = function (date, locale) {
 
 //? Handle clock
 const calcDateTime = function (account) {
+  if (!account) return;
+
   //* Internationalization INTL
   const options = {
     day: '2-digit',
@@ -420,6 +422,12 @@ const countdown = function () {
   return timer;
 };
 
+const displayDateClock = function () {
+  clock = setInterval(() => {
+    labelDate.textContent = `${calcDateTime(currentAccount)}`;
+  }, 1000);
+};
+
 ///////////////////////////////////////////////////
 // ERRORS
 ///////////////////////////////////////////////////
@@ -435,6 +443,69 @@ const showErrorMsg = function (msg, className) {
 const hideErrorMsg = function (className) {
   document.querySelector(`.${className}`).style.opacity = '0';
 };
+
+///////////////////////////////////////////////////
+// LOGIN
+///////////////////////////////////////////////////
+
+//? Login implementation
+//! Calc username
+accounts.forEach(acc => {
+  acc.username = acc.owner
+    .split(' ')
+    .reduce((username, n) => (username += n[0]), '')
+    .toLowerCase();
+});
+
+//! Find account
+const findAccount = function (enteredName, enteredPin) {
+  return accounts.find(acc => {
+    return enteredPin
+      ? acc.username === enteredName && acc.pin === enteredPin
+      : acc.username === enteredName;
+  });
+};
+
+//! login button handler event
+const loginCallback = e => {
+  e.preventDefault();
+
+  //! Check credintials
+  if (inputLoginUsername.value === '' || inputLoginPin.value === '') {
+    showErrorMsg('Please add correct username and PIN', 'login__error');
+  } else {
+    //! Find account
+    currentAccount = findAccount(
+      inputLoginUsername.value,
+      Number(inputLoginPin.value)
+    );
+
+    if (!currentAccount)
+      return showErrorMsg('Wrong username or PIN :(', 'login__error');
+
+    hideErrorMsg('login__error');
+    //! Display welcome message
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.owner.split(' ')[0]
+    }`;
+    //! Display date and time
+    displayDateClock();
+
+    //! Display UI
+    containerApp.style.opacity = 1;
+    //! Update UI
+    updateUI(currentAccount);
+    //! Reset inputs
+    inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginPin.blur();
+
+    //! Set coundown timer
+    if (timer) clearInterval(timer);
+    timer = countdown();
+  }
+};
+
+btnLogin.addEventListener('click', loginCallback);
 
 ///////////////////////////////////////////////////
 // Modal
@@ -460,69 +531,15 @@ const showModal = function (msg, noAction = false) {
 const hideModal = function () {
   overlay.classList.add('hidden');
   modal.classList.add('hidden');
+  // Set clock
+  clearInterval(clock);
+  // Set coundown timer
+  clearInterval(timer);
 };
 
 modalNoBtn.addEventListener('click', hideModal);
 modalCloseIcon.addEventListener('click', hideModal);
 overlay.addEventListener('click', hideModal);
-
-///////////////////////////////////////////////////
-// LOGIN
-///////////////////////////////////////////////////
-
-//? Login implementation
-//! Calc username
-accounts.forEach(acc => {
-  acc.username = acc.owner
-    .split(' ')
-    .reduce((username, n) => (username += n[0]), '')
-    .toLowerCase();
-});
-
-//! Find account
-const findAccount = function (data) {
-  return accounts.find(acc => acc.username === data);
-};
-
-//! login button handler event
-btnLogin.addEventListener('click', e => {
-  e.preventDefault();
-
-  //! Check credintials
-  if (inputLoginUsername.value === '' || inputLoginPin.value === '') {
-    showErrorMsg('Please add correct username and PIN', 'login__error');
-  } else {
-    //! Set coundown timer
-    if (timer) clearInterval(timer);
-    timer = countdown();
-    //! Find account
-    currentAccount = findAccount(inputLoginUsername.value);
-    //! Check PIN
-    if (currentAccount && Number(inputLoginPin.value) === currentAccount?.pin) {
-      hideErrorMsg('login__error');
-      //! Display welcome message
-      labelWelcome.textContent = `Welcome back, ${
-        currentAccount.owner.split(' ')[0]
-      }`;
-      //! Display date and time
-      const displayDateTime = function () {
-        labelDate.textContent = `${calcDateTime(currentAccount)}`;
-      };
-      displayDateTime();
-      setInterval(displayDateTime, 1000);
-
-      //! Display UI
-      containerApp.style.opacity = 1;
-      //! Update UI
-      updateUI(currentAccount);
-      //! Reset inputs
-      inputLoginUsername.value = inputLoginPin.value = '';
-      inputLoginPin.blur();
-    } else {
-      showErrorMsg('Wrong username or PIN :(', 'login__error');
-    }
-  }
-});
 
 /////////////////////////////////////////////////
 // TRANSFER
@@ -536,7 +553,7 @@ btnTransfer.addEventListener('click', e => {
   clearInterval(timer);
   timer = countdown();
 
-  let transferAmount = inputTransferAmount.value;
+  let transferAmount = Number(inputTransferAmount.value);
   let transferTo = inputTransferTo.value;
 
   const warningMsg = 'Please enter correct data';
@@ -598,7 +615,7 @@ btnLoan.addEventListener('click', function (e) {
   clearInterval(timer);
   timer = countdown();
 
-  const loanAmount = Math.floor(inputLoanAmount.value);
+  const loanAmount = Math.floor(Number(inputLoanAmount.value));
   const warningMsg = 'Please enter valid amount';
   const confirmationMsg = `you're almost to take a loan with ${loanAmount} EUR. Are you sure?`;
   const sorryMsg = `Sorry 😢 you cannot take this loan. You must add a deposite in your account with at least 10% of the loan's amount.`;
@@ -650,15 +667,14 @@ btnClose.addEventListener('click', e => {
   if (
     inputCloseUsername.value !== currentAccount.username ||
     Number(inputClosePin.value) !== currentAccount.pin
-  ) {
+  )
     showErrorMsg(warningMsg, 'close--error');
-  } else {
+  else {
     showModal(confirmationMsg);
     modalYesBtn.onclick = function () {
-      const currentIndex = accounts.findIndex(
-        acc => inputCloseUsername.value === acc.username
+      accounts = accounts.filter(
+        account => inputCloseUsername.value !== account.username
       );
-      accounts.splice(currentIndex, 1);
       // Reset welcome message
       labelWelcome.textContent = 'Log in to get started';
       inputCloseUsername.value = inputClosePin.value = '';
