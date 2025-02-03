@@ -1,9 +1,16 @@
 # **Bankist: Banking Web Application**
 
+## Table of Contents
+
+-   [Description](#description)
+-   [Key Features](#key-features)
+-   [Technical Architecture](#technical-architecture)
+-   [Tech Stack](#tech-stack)
+   
+**Live demo** [click here](https://bankist-banking-management.netlify.app/)
+
 ![alt text](./design/bankist-home.jpg)
 ![alt text](./design/account-management.jpg)
-
-**Live demo** [click here](https://bankist-banking-management.netlify.app/)
 
 > ### **Description:**
 
