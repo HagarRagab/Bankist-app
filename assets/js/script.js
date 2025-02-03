@@ -124,10 +124,11 @@ navLinks.addEventListener('click', e => {
 ////////////////////////////////////////////////
 
 const revealSec = function (entries, observer) {
-  const [entry] = entries;
-  if (!entry.isIntersecting) return;
-  entry.target.classList.remove('section--hidden');
-  observer.unobserve(entry.target);
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.classList.remove('section--hidden');
+    observer.unobserve(entry.target);
+  });
 };
 
 const revealObserver = new IntersectionObserver(revealSec, {
