@@ -248,7 +248,7 @@ for (let i = 0; i < maxSlideNum; i++) {
     <div class="dots__dot ${
       i === 0 && 'dots__dot--active'
     }" data-slide="${i}"></div>
-  `
+  `,
   );
 }
 

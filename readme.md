@@ -2,12 +2,10 @@
 
 ## Table of Contents
 
--   [Description](#description)
--   [Key Features](#key-features)
--   [Technical Architecture](#technical-architecture)
--   [Tech Stack](#tech-stack)
-   
-**Live demo** [click here](https://bankist-banking-management.netlify.app/)
+- [Description](#description)
+- [Key Features](#key-features)
+- [Technical Architecture](#technical-architecture)
+- [Tech Stack](#tech-stack)
 
 ![alt text](./design/bankist-home.jpg)
 ![alt text](./design/account-management.jpg)
@@ -31,7 +29,6 @@ Bankist is a simulation for a modern banking web application built with Native J
 #### **Login Page:**
 
 - **Account Access:**
-
   - Users can log in to view and manage their accounts.
 
 - **Account Management Features:**
@@ -45,7 +42,6 @@ Bankist is a simulation for a modern banking web application built with Native J
 > ### **Technical Architecture:**
 
 1. **Functional Programming (FP):**
-
    - Code is structured using pure functions, immutability, and first-class functions for better readability and maintainability.
 
 2. **Performance Optimization:**
